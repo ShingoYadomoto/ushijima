@@ -14,4 +14,12 @@ services:
     ports:
       - 8888:8888
     volumes:
-      - ./server:/api
+      - ./server:/server
+
+  db:
+    image: postgres:10.5
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root

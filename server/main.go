@@ -1,27 +1,56 @@
-package main // import "server"
+package main
 
 import (
-	"server/handler"
+	"fmt"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/contrib/static"
-	"github.com/gin-gonic/gin"
+	"github.com/ShingoYadomoto/vue-go-heroku/server/config"
+	"github.com/ShingoYadomoto/vue-go-heroku/server/context"
+	"github.com/ShingoYadomoto/vue-go-heroku/server/db"
+	"github.com/ShingoYadomoto/vue-go-heroku/server/handler"
+	"github.com/ShingoYadomoto/vue-go-heroku/server/middleware"
+	"github.com/labstack/echo"
+	echo_middleware "github.com/labstack/echo/middleware"
+	"github.com/labstack/gommon/log"
 )
 
 func main() {
-	r := gin.Default()
 
-	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:8080"},
-		AllowMethods: []string{"GET", "POST", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"*"},
-	}))
+	conf := config.GetConfig()
 
-	// 追加!!
-	r.Use(static.Serve("/", static.LocalFile("./images", true)))
+	e := initEcho(&conf)
 
-	r.GET("/images", handler.List)
-	r.POST("/images", handler.Upload)
-	r.DELETE("/images/:uuid", handler.Delete)
-	r.Run(":8888")
+	db, err := db.NewDB(conf.Pgsql)
+	if err != nil {
+		log.Panic(fmt.Errorf("Faild to connect DB. %v", err))
+	}
+	defer func() {
+		err := recover()
+		if err != nil {
+			db.Close()
+			log.Panic(fmt.Errorf("Faild to prepare echo. %v", err))
+		}
+	}()
+
+	e.Debug = true
+
+	e.GET("/", handler.Home)
+
+	// Start server
+	address := ":" + conf.App.Port
+	e.Logger.Fatal(e.Start(address))
+}
+
+func initEcho(conf *config.Conf) *echo.Echo {
+	// Setup
+	e := echo.New()
+
+	e.Logger.SetLevel(conf.Log.Level)
+	log.SetLevel(conf.Log.Level)
+
+	e.Use(context.CustomContextMiddleware())
+	e.Use(middleware.ConfigMiddleware(conf))
+	e.Use(echo_middleware.Logger())
+	e.Use(echo_middleware.Recover())
+
+	return e
 }
