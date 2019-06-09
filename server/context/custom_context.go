@@ -3,6 +3,7 @@ package context
 import (
 	"github.com/ShingoYadomoto/vue-go-heroku/server/config"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 )
@@ -22,6 +23,7 @@ type CustomContext struct {
 
 const (
 	ConfigKey = "__CONFIG__"
+	DBKey     = "__DB__"
 )
 
 func (c *CustomContext) GetConfig() *config.Conf {
@@ -30,4 +32,12 @@ func (c *CustomContext) GetConfig() *config.Conf {
 		log.Panic("*config.Conf assertion error")
 	}
 	return conf
+}
+
+func (c *CustomContext) GetDB() *sqlx.DB {
+	db, ok := c.Get(DBKey).(*sqlx.DB)
+	if !ok {
+		log.Panic("*sqlx.DB assertion error")
+	}
+	return db
 }

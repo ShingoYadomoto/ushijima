@@ -8,6 +8,7 @@ import (
 	"github.com/ShingoYadomoto/vue-go-heroku/server/db"
 	"github.com/ShingoYadomoto/vue-go-heroku/server/handler"
 	"github.com/ShingoYadomoto/vue-go-heroku/server/middleware"
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo"
 	echo_middleware "github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/log"
@@ -16,8 +17,6 @@ import (
 func main() {
 
 	conf := config.GetConfig()
-
-	e := initEcho(&conf)
 
 	db, err := db.NewDB(conf.Pgsql)
 	if err != nil {
@@ -31,16 +30,19 @@ func main() {
 		}
 	}()
 
+	e := initEcho(&conf, db)
+
 	e.Debug = true
 
 	e.GET("/", handler.Home)
+	e.GET("/user/:userID", handler.GetUser)
 
 	// Start server
 	address := ":" + conf.App.Port
 	e.Logger.Fatal(e.Start(address))
 }
 
-func initEcho(conf *config.Conf) *echo.Echo {
+func initEcho(conf *config.Conf, db *sqlx.DB) *echo.Echo {
 	// Setup
 	e := echo.New()
 
@@ -48,7 +50,9 @@ func initEcho(conf *config.Conf) *echo.Echo {
 	log.SetLevel(conf.Log.Level)
 
 	e.Use(context.CustomContextMiddleware())
+	e.Use(middleware.BasicAuthMiddleware())
 	e.Use(middleware.ConfigMiddleware(conf))
+	e.Use(middleware.DBMiddleware(db))
 	e.Use(echo_middleware.Logger())
 	e.Use(echo_middleware.Recover())
 
