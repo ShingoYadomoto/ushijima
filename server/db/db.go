@@ -7,7 +7,7 @@ import (
 )
 
 func NewDB(c *config.Pgsql) (*sqlx.DB, error) {
-	dsn := "user=" + c.User + " dbname=" + c.DbName + " password=" + c.Password + " sslmode=disable"
+	dsn := "host=" + c.Host + " user=" + c.User + " dbname=" + c.DbName + " password=" + c.Password + " sslmode=disable"
 
 	db, err := sqlx.Connect("postgres", dsn)
 	if err != nil {

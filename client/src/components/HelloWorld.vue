@@ -1,13 +1,12 @@
 <template>
-  <button @click="showText">ステータスを表示する。</button>
-  <div id="text">{{ text.status }}</div>
+    <div>
+        <button @click="showText">ステータスを表示する。</button>
+        <div id="text">{{ text.status }}</div>
+    </div>
 </template>
 
 <script>
 import axios from 'axios'
-import vue2Dropzone from 'vue2-dropzone'
-import 'vue2-dropzone/dist/vue2Dropzone.min.css'
-
 
 export default {
     data: function() {
@@ -17,8 +16,8 @@ export default {
     },
     methods: {
         showText: function() {
-            axios.get('/').then(res => {
-                this.text = res.data.items || {};
+            axios.get('http://localhost:8888/').then(res => {
+                this.text = res.data.items[0].status || {};
             }).catch(function (error) {
                 console.log(error);
             });

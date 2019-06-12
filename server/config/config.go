@@ -28,7 +28,7 @@ type Log struct {
 type Pgsql struct {
 	User     string
 	Password string
-	Addr     string
+	Host     string
 	DbName   string `split_words:"true"`
 }
 

@@ -15,6 +15,7 @@ services:
       - 8888:8888
     volumes:
       - ./server:/server
+    command: fresh
 
   db:
     image: postgres:10.5
@@ -23,3 +24,5 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+    volumes:
+    - ./data:/var/lib/postgresql/data
