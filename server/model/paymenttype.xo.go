@@ -13,6 +13,7 @@ import (
 type PaymentType struct {
 	ID         int         `json:"id"`          // id
 	Name       null.String `json:"name"`        // name
+	Display    null.String `json:"display"`     // display
 	CreateDate null.Time   `json:"create_date"` // create_date
 	UpdateDate null.Time   `json:"update_date"` // update_date
 
@@ -41,14 +42,14 @@ func (pt *PaymentType) Insert(db XODB) error {
 
 	// sql insert query, primary key provided by sequence
 	const sqlstr = `INSERT INTO public.payment_types (` +
-		`name, create_date, update_date` +
+		`name, display, create_date, update_date` +
 		`) VALUES (` +
-		`$1, $2, $3` +
+		`$1, $2, $3, $4` +
 		`) RETURNING id`
 
 	// run query
-	XOLog(sqlstr, pt.Name, pt.CreateDate, pt.UpdateDate)
-	err = db.QueryRow(sqlstr, pt.Name, pt.CreateDate, pt.UpdateDate).Scan(&pt.ID)
+	XOLog(sqlstr, pt.Name, pt.Display, pt.CreateDate, pt.UpdateDate)
+	err = db.QueryRow(sqlstr, pt.Name, pt.Display, pt.CreateDate, pt.UpdateDate).Scan(&pt.ID)
 	if err != nil {
 		return err
 	}
@@ -75,14 +76,14 @@ func (pt *PaymentType) Update(db XODB) error {
 
 	// sql query
 	const sqlstr = `UPDATE public.payment_types SET (` +
-		`name, create_date, update_date` +
+		`name, display, create_date, update_date` +
 		`) = ( ` +
-		`$1, $2, $3` +
-		`) WHERE id = $4`
+		`$1, $2, $3, $4` +
+		`) WHERE id = $5`
 
 	// run query
-	XOLog(sqlstr, pt.Name, pt.CreateDate, pt.UpdateDate, pt.ID)
-	_, err = db.Exec(sqlstr, pt.Name, pt.CreateDate, pt.UpdateDate, pt.ID)
+	XOLog(sqlstr, pt.Name, pt.Display, pt.CreateDate, pt.UpdateDate, pt.ID)
+	_, err = db.Exec(sqlstr, pt.Name, pt.Display, pt.CreateDate, pt.UpdateDate, pt.ID)
 	return err
 }
 
@@ -108,18 +109,18 @@ func (pt *PaymentType) Upsert(db XODB) error {
 
 	// sql query
 	const sqlstr = `INSERT INTO public.payment_types (` +
-		`id, name, create_date, update_date` +
+		`id, name, display, create_date, update_date` +
 		`) VALUES (` +
-		`$1, $2, $3, $4` +
+		`$1, $2, $3, $4, $5` +
 		`) ON CONFLICT (id) DO UPDATE SET (` +
-		`id, name, create_date, update_date` +
+		`id, name, display, create_date, update_date` +
 		`) = (` +
-		`EXCLUDED.id, EXCLUDED.name, EXCLUDED.create_date, EXCLUDED.update_date` +
+		`EXCLUDED.id, EXCLUDED.name, EXCLUDED.display, EXCLUDED.create_date, EXCLUDED.update_date` +
 		`)`
 
 	// run query
-	XOLog(sqlstr, pt.ID, pt.Name, pt.CreateDate, pt.UpdateDate)
-	_, err = db.Exec(sqlstr, pt.ID, pt.Name, pt.CreateDate, pt.UpdateDate)
+	XOLog(sqlstr, pt.ID, pt.Name, pt.Display, pt.CreateDate, pt.UpdateDate)
+	_, err = db.Exec(sqlstr, pt.ID, pt.Name, pt.Display, pt.CreateDate, pt.UpdateDate)
 	if err != nil {
 		return err
 	}
@@ -168,7 +169,7 @@ func PaymentTypeByID(db XODB, id int) (*PaymentType, error) {
 
 	// sql query
 	const sqlstr = `SELECT ` +
-		`id, name, create_date, update_date ` +
+		`id, name, display, create_date, update_date ` +
 		`FROM public.payment_types ` +
 		`WHERE id = $1`
 
@@ -178,7 +179,7 @@ func PaymentTypeByID(db XODB, id int) (*PaymentType, error) {
 		_exists: true,
 	}
 
-	err = db.QueryRow(sqlstr, id).Scan(&pt.ID, &pt.Name, &pt.CreateDate, &pt.UpdateDate)
+	err = db.QueryRow(sqlstr, id).Scan(&pt.ID, &pt.Name, &pt.Display, &pt.CreateDate, &pt.UpdateDate)
 	if err != nil {
 		return nil, err
 	}
