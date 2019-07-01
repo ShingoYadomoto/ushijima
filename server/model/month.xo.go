@@ -11,10 +11,10 @@ import (
 
 // Month represents a row from 'public.months'.
 type Month struct {
-	ID         int         `json:"id"`          // id
-	Display    null.String `json:"display"`     // display
-	CreateDate null.Time   `json:"create_date"` // create_date
-	UpdateDate null.Time   `json:"update_date"` // update_date
+	ID         int         `db:"id" json:"id"`                   // id
+	Display    null.String `db:"display" json:"display"`         // display
+	CreateDate null.Time   `db:"create_date" json:"create_date"` // create_date
+	UpdateDate null.Time   `db:"update_date" json:"update_date"` // update_date
 
 	// xo fields
 	_exists, _deleted bool

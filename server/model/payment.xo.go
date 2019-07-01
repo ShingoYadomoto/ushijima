@@ -11,13 +11,13 @@ import (
 
 // Payment represents a row from 'public.payments'.
 type Payment struct {
-	ID              int       `json:"id"`                // id
-	PaymentTypeID   null.Int  `json:"payment_type_id"`   // payment_type_id
-	PaymentStatusID null.Int  `json:"payment_status_id"` // payment_status_id
-	Amount          null.Int  `json:"amount"`            // amount
-	CreateDate      null.Time `json:"create_date"`       // create_date
-	UpdateDate      null.Time `json:"update_date"`       // update_date
-	MonthID         null.Int  `json:"month_id"`          // month_id
+	ID              int       `db:"id" json:"id"`                               // id
+	PaymentTypeID   null.Int  `db:"payment_type_id" json:"payment_type_id"`     // payment_type_id
+	PaymentStatusID null.Int  `db:"payment_status_id" json:"payment_status_id"` // payment_status_id
+	Amount          null.Int  `db:"amount" json:"amount"`                       // amount
+	CreateDate      null.Time `db:"create_date" json:"create_date"`             // create_date
+	UpdateDate      null.Time `db:"update_date" json:"update_date"`             // update_date
+	MonthID         null.Int  `db:"month_id" json:"month_id"`                   // month_id
 
 	// xo fields
 	_exists, _deleted bool

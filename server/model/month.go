@@ -2,7 +2,7 @@ package model
 
 func MonthByDisplay(db XODB, d string) (*Month, error) {
 	const sqlstr = `SELECT ` +
-		`id, display, create_date, update_date ` +
+		`*` +
 		`FROM public.months ` +
 		`WHERE display = $1`
 
