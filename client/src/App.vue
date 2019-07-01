@@ -1,27 +1,30 @@
 <template>
-  <div id="app">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div id="app" class="ushijima_back">
+        <mainContent></mainContent>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import mainContent from './components/MainContent.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+      mainContent
   }
 }
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  padding-top: 300px;
+}
+
+.ushijima_back {
+    display: block;
+    min-height: 912px;
+    background: url(./assets/images/ushijima_bottomback.jpg) no-repeat;
 }
 </style>

@@ -7,7 +7,8 @@ func PaymentListByMonthID(db XODB, id int) (*[]Payment, error) {
 	const sqlstr = `SELECT ` +
 		`* ` +
 		`FROM public.payments ` +
-		`WHERE month_id = $1`
+		`WHERE month_id = $1 ` +
+		`ORDER BY payment_type_id `
 
 	pl := []Payment{}
 

@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 
+	"net/http"
+
 	"github.com/ShingoYadomoto/vue-go-heroku/server/config"
 	"github.com/ShingoYadomoto/vue-go-heroku/server/context"
 	"github.com/ShingoYadomoto/vue-go-heroku/server/db"
@@ -35,7 +37,8 @@ func main() {
 	e.Debug = true
 
 	e.GET("/", handler.Home)
-	e.GET("/user/:userID", handler.GetUser)
+	e.GET("/payment_type", handler.GetAllPaymentTypes)
+	e.GET("/payment", handler.GetPaymentList)
 
 	// Start server
 	address := ":" + conf.App.Port
@@ -49,6 +52,11 @@ func initEcho(conf *config.Conf, db *sqlx.DB) *echo.Echo {
 	e.Logger.SetLevel(conf.Log.Level)
 	log.SetLevel(conf.Log.Level)
 
+	e.Use(echo_middleware.CORSWithConfig(echo_middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
+		AllowHeaders: []string{"origin", "Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
+	}))
 	e.Use(context.CustomContextMiddleware())
 	e.Use(middleware.BasicAuthMiddleware())
 	e.Use(middleware.ConfigMiddleware(conf))
