@@ -11,14 +11,13 @@ import (
 
 // Payment represents a row from 'public.payments'.
 type Payment struct {
-	ID               int         `json:"id"`                 // id
-	Name             null.String `json:"name"`               // name
-	PaymentTypeID    null.Int    `json:"payment_type_id"`    // payment_type_id
-	PaymentStatusID  null.Int    `json:"payment_status_id"`  // payment_status_id
-	Amount           null.Int    `json:"amount"`             // amount
-	CreateDate       null.Time   `json:"create_date"`        // create_date
-	UpdateDate       null.Time   `json:"update_date"`        // update_date
-	PaymentSummaryID null.Int    `json:"payment_summary_id"` // payment_summary_id
+	ID              int       `json:"id"`                // id
+	PaymentTypeID   null.Int  `json:"payment_type_id"`   // payment_type_id
+	PaymentStatusID null.Int  `json:"payment_status_id"` // payment_status_id
+	Amount          null.Int  `json:"amount"`            // amount
+	CreateDate      null.Time `json:"create_date"`       // create_date
+	UpdateDate      null.Time `json:"update_date"`       // update_date
+	MonthID         null.Int  `json:"month_id"`          // month_id
 
 	// xo fields
 	_exists, _deleted bool
@@ -45,14 +44,14 @@ func (p *Payment) Insert(db XODB) error {
 
 	// sql insert query, primary key provided by sequence
 	const sqlstr = `INSERT INTO public.payments (` +
-		`name, payment_type_id, payment_status_id, amount, create_date, update_date, payment_summary_id` +
+		`payment_type_id, payment_status_id, amount, create_date, update_date, month_id` +
 		`) VALUES (` +
-		`$1, $2, $3, $4, $5, $6, $7` +
+		`$1, $2, $3, $4, $5, $6` +
 		`) RETURNING id`
 
 	// run query
-	XOLog(sqlstr, p.Name, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.PaymentSummaryID)
-	err = db.QueryRow(sqlstr, p.Name, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.PaymentSummaryID).Scan(&p.ID)
+	XOLog(sqlstr, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.MonthID)
+	err = db.QueryRow(sqlstr, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.MonthID).Scan(&p.ID)
 	if err != nil {
 		return err
 	}
@@ -79,14 +78,14 @@ func (p *Payment) Update(db XODB) error {
 
 	// sql query
 	const sqlstr = `UPDATE public.payments SET (` +
-		`name, payment_type_id, payment_status_id, amount, create_date, update_date, payment_summary_id` +
+		`payment_type_id, payment_status_id, amount, create_date, update_date, month_id` +
 		`) = ( ` +
-		`$1, $2, $3, $4, $5, $6, $7` +
-		`) WHERE id = $8`
+		`$1, $2, $3, $4, $5, $6` +
+		`) WHERE id = $7`
 
 	// run query
-	XOLog(sqlstr, p.Name, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.PaymentSummaryID, p.ID)
-	_, err = db.Exec(sqlstr, p.Name, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.PaymentSummaryID, p.ID)
+	XOLog(sqlstr, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.MonthID, p.ID)
+	_, err = db.Exec(sqlstr, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.MonthID, p.ID)
 	return err
 }
 
@@ -112,18 +111,18 @@ func (p *Payment) Upsert(db XODB) error {
 
 	// sql query
 	const sqlstr = `INSERT INTO public.payments (` +
-		`id, name, payment_type_id, payment_status_id, amount, create_date, update_date, payment_summary_id` +
+		`id, payment_type_id, payment_status_id, amount, create_date, update_date, month_id` +
 		`) VALUES (` +
-		`$1, $2, $3, $4, $5, $6, $7, $8` +
+		`$1, $2, $3, $4, $5, $6, $7` +
 		`) ON CONFLICT (id) DO UPDATE SET (` +
-		`id, name, payment_type_id, payment_status_id, amount, create_date, update_date, payment_summary_id` +
+		`id, payment_type_id, payment_status_id, amount, create_date, update_date, month_id` +
 		`) = (` +
-		`EXCLUDED.id, EXCLUDED.name, EXCLUDED.payment_type_id, EXCLUDED.payment_status_id, EXCLUDED.amount, EXCLUDED.create_date, EXCLUDED.update_date, EXCLUDED.payment_summary_id` +
+		`EXCLUDED.id, EXCLUDED.payment_type_id, EXCLUDED.payment_status_id, EXCLUDED.amount, EXCLUDED.create_date, EXCLUDED.update_date, EXCLUDED.month_id` +
 		`)`
 
 	// run query
-	XOLog(sqlstr, p.ID, p.Name, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.PaymentSummaryID)
-	_, err = db.Exec(sqlstr, p.ID, p.Name, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.PaymentSummaryID)
+	XOLog(sqlstr, p.ID, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.MonthID)
+	_, err = db.Exec(sqlstr, p.ID, p.PaymentTypeID, p.PaymentStatusID, p.Amount, p.CreateDate, p.UpdateDate, p.MonthID)
 	if err != nil {
 		return err
 	}
@@ -164,18 +163,18 @@ func (p *Payment) Delete(db XODB) error {
 	return nil
 }
 
+// Month returns the Month associated with the Payment's MonthID (month_id).
+//
+// Generated from foreign key 'month_id'.
+func (p *Payment) Month(db XODB) (*Month, error) {
+	return MonthByID(db, int(p.MonthID.Int64))
+}
+
 // PaymentStatus returns the PaymentStatus associated with the Payment's PaymentStatusID (payment_status_id).
 //
 // Generated from foreign key 'payments_payment_status_id_fkey'.
 func (p *Payment) PaymentStatus(db XODB) (*PaymentStatus, error) {
 	return PaymentStatusByID(db, int(p.PaymentStatusID.Int64))
-}
-
-// PaymentSummary returns the PaymentSummary associated with the Payment's PaymentSummaryID (payment_summary_id).
-//
-// Generated from foreign key 'payments_payment_summary_id_fkey'.
-func (p *Payment) PaymentSummary(db XODB) (*PaymentSummary, error) {
-	return PaymentSummaryByID(db, int(p.PaymentSummaryID.Int64))
 }
 
 // PaymentType returns the PaymentType associated with the Payment's PaymentTypeID (payment_type_id).
@@ -193,7 +192,7 @@ func PaymentByID(db XODB, id int) (*Payment, error) {
 
 	// sql query
 	const sqlstr = `SELECT ` +
-		`id, name, payment_type_id, payment_status_id, amount, create_date, update_date, payment_summary_id ` +
+		`id, payment_type_id, payment_status_id, amount, create_date, update_date, month_id ` +
 		`FROM public.payments ` +
 		`WHERE id = $1`
 
@@ -203,7 +202,7 @@ func PaymentByID(db XODB, id int) (*Payment, error) {
 		_exists: true,
 	}
 
-	err = db.QueryRow(sqlstr, id).Scan(&p.ID, &p.Name, &p.PaymentTypeID, &p.PaymentStatusID, &p.Amount, &p.CreateDate, &p.UpdateDate, &p.PaymentSummaryID)
+	err = db.QueryRow(sqlstr, id).Scan(&p.ID, &p.PaymentTypeID, &p.PaymentStatusID, &p.Amount, &p.CreateDate, &p.UpdateDate, &p.MonthID)
 	if err != nil {
 		return nil, err
 	}
