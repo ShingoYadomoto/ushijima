@@ -19,7 +19,7 @@ export default {
 #app {
   text-align: center;
   color: #2c3e50;
-  padding-top: 300px;
+  padding-top: 230px;
 }
 
 .ushijima_back {

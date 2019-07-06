@@ -3,10 +3,10 @@
         <tbody>
             <tr>
                 <th></th>
-                <th v-for="type in paymentTypeList" :key="type.id">{{ type.display }}</th>
+                <th v-for="(type, idx) in paymentTypeList" :key="idx">{{ type.display }}</th>
                 <th>合計</th>
             </tr>
-            <tr v-for="ps in paymentsList">
+            <tr v-for="(ps, idx) in paymentsList" :key="idx">
                 <td>{{ ps.month.display }}</td>
                 <td v-for="p in ps.payments">
                     <i v-if="p.payment_status_id == 1" class="material-icons">check</i>

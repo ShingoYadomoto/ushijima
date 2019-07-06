@@ -1,5 +1,21 @@
 package model
 
+func AllMonths(db XODB) (*[]Month, error) {
+	const sqlstr = `SELECT 
+		* 
+		FROM public.months
+		ORDER BY id`
+
+	ptl := []Month{}
+
+	err := db.Select(&ptl, sqlstr)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ptl, nil
+}
+
 func MonthByDisplay(db XODB, d string) (*Month, error) {
 	const sqlstr = `SELECT ` +
 		`*` +

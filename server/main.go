@@ -37,8 +37,12 @@ func main() {
 	e.Debug = true
 
 	e.GET("/", handler.Home)
+	e.GET("/month", handler.GetAllMonths)
 	e.GET("/payment_type", handler.GetAllPaymentTypes)
+	e.GET("/payment_status", handler.GetAllPaymentStatuses)
+
 	e.GET("/payment", handler.GetPaymentList)
+	e.POST("/payment/create", handler.CreatePayment)
 
 	// Start server
 	address := ":" + conf.App.Port

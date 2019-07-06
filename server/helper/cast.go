@@ -17,3 +17,7 @@ func AtoiSlice(stringSlice []string) (intSlice []int, err error) {
 	}
 	return
 }
+
+func Atoi64(s string) (i int64, err error) {
+	return strconv.ParseInt(s, 10, 64)
+}
