@@ -184,6 +184,32 @@ func (p *Payment) PaymentType(db XODB) (*PaymentType, error) {
 	return PaymentTypeByID(db, int(p.PaymentTypeID.Int64))
 }
 
+// PaymentByPaymentTypeIDMonthID retrieves a row from 'public.payments' as a Payment.
+//
+// Generated from index 'payment_type_month_unique'.
+func PaymentByPaymentTypeIDMonthID(db XODB, paymentTypeID null.Int, monthID null.Int) (*Payment, error) {
+	var err error
+
+	// sql query
+	const sqlstr = `SELECT ` +
+		`id, payment_type_id, payment_status_id, amount, create_date, update_date, month_id ` +
+		`FROM public.payments ` +
+		`WHERE payment_type_id = $1 AND month_id = $2`
+
+	// run query
+	XOLog(sqlstr, paymentTypeID, monthID)
+	p := Payment{
+		_exists: true,
+	}
+
+	err = db.QueryRow(sqlstr, paymentTypeID, monthID).Scan(&p.ID, &p.PaymentTypeID, &p.PaymentStatusID, &p.Amount, &p.CreateDate, &p.UpdateDate, &p.MonthID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &p, nil
+}
+
 // PaymentByID retrieves a row from 'public.payments' as a Payment.
 //
 // Generated from index 'payments_pkey'.

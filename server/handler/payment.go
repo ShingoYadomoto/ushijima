@@ -64,23 +64,26 @@ func CreatePayment(c echo.Context) (err error) {
 	am, err := helper.Atoi64(c.FormValue("amount"))
 	if err != nil {
 		log.Error(err)
-		return c.JSON(http.StatusOK, map[string]string{"error": err.Error()})
+		return c.JSON(http.StatusOK, map[string]string{"error": "送信内容がなんかおかしいよ"})
 	}
 
-	if mid != 0 && ptid != 0 && psid != 0 && am != 0 {
-		return c.JSON(http.StatusOK, map[string]string{})
+	if mid == 0 || ptid == 0 || psid == 0 || am == 0 {
+		return c.JSON(http.StatusOK, map[string]string{"error": "何か入力してないか、0入っちゃってるよ"})
 	}
 
-	p := model.Payment{
-		MonthID:         null.IntFrom(mid),
-		PaymentTypeID:   null.IntFrom(ptid),
-		PaymentStatusID: null.IntFrom(psid),
-	}
-
-	err = p.Insert(db) //アップデートにする
+	p, err := model.PaymentByPaymentTypeIDMonthID(db, null.IntFrom(ptid), null.IntFrom(mid))
 	if err != nil {
 		log.Error(err)
-		return c.JSON(http.StatusOK, map[string]string{"error": err.Error()})
+		return c.JSON(http.StatusOK, map[string]string{"error": "そんなtypeとstatusの支払いみつからないんだけど"})
+	}
+	p.PaymentStatusID = null.IntFrom(psid)
+	p.Amount = null.IntFrom(am)
+
+	err = p.Update(db)
+
+	if err != nil {
+		log.Error(err)
+		return c.JSON(http.StatusOK, map[string]string{"error": "データベース更新できなかったすまん"})
 	}
 
 	return c.JSON(http.StatusOK, map[string]bool{"isSuccess": true})

@@ -1,6 +1,8 @@
 <template>
     <div id="payment_form" class="container card-panel striped">
-        <div v-show="isSuccess" class="card-panel teal lighten-2">保存しました。</div>
+        <div v-show="isSuccess" class="payment_form__message card-panel blue lighten-1">保存しました。</div>
+        <div v-if="!isSuccess && error" v-show="error" class="payment_form__message--error card-panel  pink accent-3">{{ error }}</div>
+
         <form method="POST">
             <div class="mui-select">
                 <select name="month_id" v-model="params.monthId">
@@ -28,7 +30,7 @@
 
             <div class="mui-textfield mui-textfield--float-label">
                 <input  name="amount" type="number"  v-model="params.amount">
-                <label><i class="material-icons">attach_money</i>amount</label>
+                <label><i class="material-icons">attach_money</i>Amount</label>
             </div>
 
             <button class="btn waves-effect waves-light" v-on:click="submit">Submit
@@ -61,6 +63,7 @@
                     amount: null,
                 },
                 isSuccess: false,
+                error: '',
             }
         },
         methods: {
@@ -96,6 +99,7 @@
 
                 customAxios.post('http://localhost:8888/payment/create', data).then(res => {
                     this.isSuccess = res.data.isSuccess;
+                    this.error = res.data.error;
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -126,5 +130,14 @@
         font-size: 16px;
         margin-right: 2px;
         vertical-align: middle;
+    }
+    .payment_form__message {
+        margin-bottom: 20px;
+        color: #fff;
+        font-weight: bold;
+    }
+    .payment_form__message--error {
+        color: #fff;
+        font-weight: bold;
     }
 </style>
