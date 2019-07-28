@@ -83,7 +83,7 @@ func CreatePayment(c echo.Context) (err error) {
 
 	if err != nil {
 		log.Error(err)
-		return c.JSON(http.StatusOK, map[string]string{"error": "...エラーだ。おい、やどに連絡しろ。 ギャンブルにハマった奴の明日は信用しねェ。 そこで待っとけ。"})
+		return c.JSON(http.StatusOK, map[string]string{"error": "...エラーだ。おい、宿本に連絡しろ。 ギャンブルにハマった奴の明日は信用しねェ。 そこで待っとけ。"})
 	}
 
 	return c.JSON(http.StatusOK, map[string]bool{"isSuccess": true})

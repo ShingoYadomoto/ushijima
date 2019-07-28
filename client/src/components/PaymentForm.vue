@@ -9,7 +9,7 @@
                     <option value="" disabled selected></option>
                     <option v-for="(month, idx) in monthList" :key="idx" :value="month.id">{{ month.display }}</option>
                 </select>
-                <label><i class="material-icons">event</i>Month</label>
+                <label><i class="material-icons">event</i>何月分？</label>
             </div>
 
             <div class="mui-select">
@@ -17,7 +17,7 @@
                     <option value="" disabled selected></option>
                     <option v-for="(paymentType, idx) in paymentTypeList" :key="idx" :value="paymentType.id">{{ paymentType.display }}</option>
                 </select>
-                <label><i class="material-icons">view_carousel</i>Payment Type</label>
+                <label><i class="material-icons">view_carousel</i>なに代？</label>
             </div>
 
             <div class="mui-select">
@@ -25,12 +25,12 @@
                     <option value="" disabled selected></option>
                     <option v-for="(paymentStatus, idx) in paymentStatusList" :key="idx" :value="paymentStatus.id">{{ paymentStatus.display }}</option>
                 </select>
-                <label><i class="material-icons">grade</i>Payment Status</label>
+                <label><i class="material-icons">grade</i>支払済？</label>
             </div>
 
             <div class="mui-textfield mui-textfield--float-label">
                 <input  name="amount" type="number"  v-model="params.amount">
-                <label><i class="material-icons">attach_money</i>Amount</label>
+                <label><i class="material-icons">attach_money</i>金額は？</label>
             </div>
 
             <button class="btn waves-effect waves-light" v-on:click="submit">Submit
