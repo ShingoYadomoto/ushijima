@@ -11,7 +11,8 @@
                 <td v-for="p in ps.payments">
                     <i v-if="p.payment_status_id == 1" class="material-icons">check</i>
                     <i v-else-if="p.payment_status_id == 2" class="material-icons">check_box_outline_blank</i>
-                    <i v-else-if="p.payment_status_id == 3" class="material-icons">today</i>
+                    <i v-else-if="p.payment_status_id == 3" class="material-icons">sports_tennis</i>
+                    <i v-else-if="p.payment_status_id == 4" class="material-icons">sports_soccer</i>
 
                     ¥{{ p.amount }}
                 </td>

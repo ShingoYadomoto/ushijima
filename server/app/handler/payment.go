@@ -41,7 +41,8 @@ func (self implPaymentHandler) GetPaymentList(c echo.Context) (err error) {
 	pfdl := make([]*PaymentsForDisp, 6)
 	tf := 0
 	for i, _ := range pfdl {
-		display := t.AddDate(0, 1, 0).Format("2006-01")
+		//display := t.AddDate(0, 1, 0).Format("2006-01")
+		display := t.Format("2006-01")
 
 		m, err := self.MonthRepository.MonthByDisplay(display)
 		if err != nil {
@@ -60,7 +61,8 @@ func (self implPaymentHandler) GetPaymentList(c echo.Context) (err error) {
 
 		pfdl[i] = &PaymentsForDisp{Month: m, Payments: ps, TotalFee: tf}
 		// 一ヶ月前
-		t = t.AddDate(0, -1, 0)
+		//t = t.AddDate(0, -1, 0)
+		t = t.AddDate(0, 1, 0)
 		tf = 0
 	}
 

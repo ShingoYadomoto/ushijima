@@ -112,7 +112,7 @@ func (self implPaymentTypeRepository) PaymentTypeByID(id int) (*model.PaymentTyp
 	postgres.DBLog(sqlstr, id)
 	pt := &model.PaymentType{}
 
-	err = self.db.QueryRow(sqlstr, id).Scan(pt.ID, pt.Name, pt.Display, pt.CreateDate, pt.UpdateDate)
+	err = self.db.QueryRow(sqlstr, id).Scan(&pt.ID, &pt.Name, &pt.Display, &pt.CreateDate, &pt.UpdateDate)
 	if err != nil {
 		return nil, err
 	}

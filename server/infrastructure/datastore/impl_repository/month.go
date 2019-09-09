@@ -112,7 +112,7 @@ func (self implMonthRepository) MonthByID(id int) (*model.Month, error) {
 	postgres.DBLog(sqlstr, id)
 	m := new(model.Month)
 
-	err = self.db.QueryRow(sqlstr, id).Scan(m.ID, m.Display, m.CreateDate, m.UpdateDate)
+	err = self.db.QueryRow(sqlstr, id).Scan(&m.ID, &m.Display, &m.CreateDate, &m.UpdateDate)
 	if err != nil {
 		return nil, err
 	}
@@ -137,16 +137,13 @@ func (self implMonthRepository) AllMonths() (*[]model.Month, error) {
 }
 
 func (self implMonthRepository) MonthByDisplay(d string) (*model.Month, error) {
-	const sqlstr = `SELECT ` +
-		`*` +
-		`FROM public.months ` +
-		`WHERE display = $1`
+	const sqlstr = `SELECT * FROM public.months WHERE display = $1`
 
 	// run query
 	postgres.DBLog(sqlstr, d)
 	m := new(model.Month)
 
-	err := self.db.QueryRow(sqlstr, d).Scan(m.ID, m.Display, m.CreateDate, m.UpdateDate)
+	err := self.db.QueryRow(sqlstr, d).Scan(&m.ID, &m.Display, &m.CreateDate, &m.UpdateDate)
 	if err != nil {
 		return nil, err
 	}
