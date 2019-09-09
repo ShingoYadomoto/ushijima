@@ -5,11 +5,11 @@ import (
 
 	"net/http"
 
-	"github.com/ShingoYadomoto/vue-go-heroku/server/config"
-	"github.com/ShingoYadomoto/vue-go-heroku/server/context"
-	"github.com/ShingoYadomoto/vue-go-heroku/server/db"
-	"github.com/ShingoYadomoto/vue-go-heroku/server/handler"
-	"github.com/ShingoYadomoto/vue-go-heroku/server/middleware"
+	"github.com/ShingoYadomoto/ushijima/server/app/context"
+	"github.com/ShingoYadomoto/ushijima/server/app/db"
+	"github.com/ShingoYadomoto/ushijima/server/app/middleware"
+	"github.com/ShingoYadomoto/ushijima/server/config"
+	"github.com/ShingoYadomoto/ushijima/server/registory"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo"
 	echo_middleware "github.com/labstack/echo/middleware"
@@ -17,7 +17,6 @@ import (
 )
 
 func main() {
-
 	conf := config.GetConfig()
 
 	db, err := db.NewDB(conf.Pgsql)
@@ -36,13 +35,16 @@ func main() {
 
 	e.Debug = true
 
-	e.GET("/", handler.Home)
-	e.GET("/month", handler.GetAllMonths)
-	e.GET("/payment_type", handler.GetAllPaymentTypes)
-	e.GET("/payment_status", handler.GetAllPaymentStatuses)
+	r := registory.NewRegister(db)
 
-	e.GET("/payment", handler.GetPaymentList)
-	e.POST("/payment/create", handler.CreatePayment)
+	h := r.NewAppHandler()
+	e.GET("/", h.Home)
+	e.GET("/month", h.GetAllMonths)
+	e.GET("/payment_type", h.GetAllPaymentTypes)
+	e.GET("/payment_status", h.GetAllPaymentStatuses)
+
+	e.GET("/payment", h.GetPaymentList)
+	e.POST("/payment/create", h.CreatePayment)
 
 	// Start server
 	address := ":" + conf.App.Port

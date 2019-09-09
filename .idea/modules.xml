@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ushijima.iml" filepath="$PROJECT_DIR$/.idea/ushijima.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/vue-go-heroku.iml" filepath="$PROJECT_DIR$/.idea/vue-go-heroku.iml" />
     </modules>
   </component>
 </project>
