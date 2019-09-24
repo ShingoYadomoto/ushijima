@@ -5,10 +5,6 @@ import (
 )
 
 type PaymentStatusRepository interface {
-	Insert(*model.PaymentStatus) error
-	Update(*model.PaymentStatus) error
-	Upsert(*model.PaymentStatus) error
-	Delete(*model.PaymentStatus) error
-	PaymentStatusByID(id int) (*model.PaymentStatus, error)
-	AllPaymentStatuses() (*[]model.PaymentStatus, error)
+	GetByID(model.PAYMENT_STATUS_ID) (*model.PaymentStatus, error)
+	GetAll() ([]model.PaymentStatus, error)
 }

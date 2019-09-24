@@ -2,15 +2,10 @@ package registory
 
 import (
 	"github.com/ShingoYadomoto/ushijima/server/app/handler"
-	"github.com/ShingoYadomoto/ushijima/server/domain/repository"
 	"github.com/ShingoYadomoto/ushijima/server/infrastructure/datastore/postgres"
 )
 
 type Register interface {
-	NewMonthRepository() repository.MonthRepository
-	NewPaymentRepository() repository.PaymentRepository
-	NewPaymentStatusRepository() repository.PaymentStatusRepository
-	NewPaymentTypeRepository() repository.PaymentTypeRepository
 	NewHomeHandler() handler.HomeHandler
 	NewPaymentHandler() handler.PaymentHandler
 	NewAppHandler() handler.AppHandler
@@ -26,12 +21,14 @@ type register struct {
 
 type appHandler struct {
 	handler.HomeHandler
+	handler.FormHandler
 	handler.PaymentHandler
 }
 
 func (self register) NewAppHandler() handler.AppHandler {
 	return &appHandler{
 		HomeHandler:    self.NewHomeHandler(),
+		FormHandler:    self.NewFormHandler(),
 		PaymentHandler: self.NewPaymentHandler(),
 	}
 }
