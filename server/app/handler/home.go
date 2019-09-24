@@ -46,14 +46,14 @@ func (self implHomeHandler) GetAllPaymentTypes(c echo.Context) (err error) {
 }
 
 func (self implHomeHandler) GetAllPaymentStatuses(c echo.Context) (err error) {
-	ptl, err := self.PaymentStatusRepository.AllPaymentStatuses()
+	psl, err := self.PaymentStatusRepository.AllPaymentStatuses()
 	if err != nil {
 		log.Error(err)
 		return c.JSON(http.StatusOK, map[string]string{"error": err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"paymentStatusList": ptl,
+		"paymentStatusList": psl,
 	})
 }
 
